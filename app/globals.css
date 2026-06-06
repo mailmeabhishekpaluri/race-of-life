@@ -11,3 +11,39 @@ html {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
 }
+
+/* Race dashboard track animation */
+.track-lines {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 20px,
+    rgba(255, 255, 255, 0.15) 20px,
+    rgba(255, 255, 255, 0.15) 28px
+  );
+  background-size: 36px 100%;
+  animation: track-scroll 0.8s linear infinite;
+}
+
+@keyframes track-scroll {
+  from { background-position: 0 0; }
+  to { background-position: 36px 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(49, 145, 194, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(49, 145, 194, 0.6); }
+}
+
+.leader-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes finish-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 197, 24, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(245, 197, 24, 0.6); }
+}
+
+.finish-glow {
+  animation: finish-glow 1.5s ease-in-out infinite;
+}
