@@ -47,4 +47,6 @@ export interface GameState {
   totalQuestions: number;
   answers: Array<{ questionId: string; answer: boolean }>;
   phase: GamePhase;
+  roomCode: string;
+  playerId: number | null;
 }

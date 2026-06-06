@@ -5,7 +5,7 @@ import { GameState, RoleId } from './types';
 import { LEVELS, TOTAL_QUESTIONS } from '@/data/questions';
 
 type GameAction =
-  | { type: 'START_GAME'; playerName: string; roleId: RoleId }
+  | { type: 'START_GAME'; playerName: string; roleId: RoleId; playerId: number; roomCode: string }
   | { type: 'ANSWER'; answer: boolean }
   | { type: 'NEXT_AFTER_REFLECTION' }
   | { type: 'START_LEVEL' }
@@ -20,6 +20,8 @@ const initialState: GameState = {
   totalQuestions: TOTAL_QUESTIONS,
   answers: [],
   phase: 'join',
+  roomCode: '',
+  playerId: null,
 };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -29,6 +31,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...initialState,
         playerName: action.playerName,
         roleId: action.roleId,
+        playerId: action.playerId,
+        roomCode: action.roomCode,
         phase: 'level-intro',
       };
 

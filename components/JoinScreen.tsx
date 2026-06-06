@@ -10,15 +10,48 @@ export default function JoinScreen() {
   const { dispatch } = useGame();
   const [name, setName] = useState('');
   const [selectedRole, setSelectedRole] = useState<RoleId | null>(null);
+  const [roomCode, setRoomCode] = useState('');
   const [showObserver, setShowObserver] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const childRoles = ROLES.filter(r => !r.isObserver);
   const observerRoles = ROLES.filter(r => r.isObserver);
-  const canStart = name.trim().length > 0 && selectedRole !== null;
+  const canStart = name.trim().length > 0 && selectedRole !== null && roomCode.trim().length > 0 && !loading;
 
-  function handleStart() {
+  async function handleStart() {
     if (!canStart || !selectedRole) return;
-    dispatch({ type: 'START_GAME', playerName: name.trim(), roleId: selectedRole });
+    setLoading(true);
+    setError('');
+
+    const role = ROLES.find(r => r.id === selectedRole)!;
+    const code = roomCode.trim().toUpperCase();
+
+    try {
+      const res = await fetch('/api/players', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room_code: code,
+          player_name: name.trim(),
+          role_id: selectedRole,
+          role_label: role.label,
+          role_emoji: role.emoji,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to join');
+      const { id } = await res.json();
+      dispatch({
+        type: 'START_GAME',
+        playerName: name.trim(),
+        roleId: selectedRole,
+        playerId: id,
+        roomCode: code,
+      });
+    } catch {
+      setError('Could not connect. Please check your connection and try again.');
+      setLoading(false);
+    }
   }
 
   return (
@@ -48,6 +81,20 @@ export default function JoinScreen() {
               placeholder="Enter your name..."
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-body focus:outline-none focus:border-brand-blue transition-colors text-base"
             />
+          </div>
+
+          <div>
+            <label className="block font-poppins font-semibold text-gray-700 mb-2 text-sm">
+              Room Code
+            </label>
+            <input
+              type="text"
+              value={roomCode}
+              onChange={e => setRoomCode(e.target.value.toUpperCase())}
+              placeholder="e.g. DELHI-01"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-body focus:outline-none focus:border-brand-blue transition-colors text-base font-poppins font-bold tracking-widest uppercase"
+            />
+            <p className="text-xs text-gray-400 mt-1 font-body">Ask your facilitator for the room code</p>
           </div>
 
           <div>
@@ -86,19 +133,22 @@ export default function JoinScreen() {
             )}
           </div>
 
+          {error && (
+            <p className="text-red-500 text-sm font-body text-center">{error}</p>
+          )}
+
           <button
             onClick={handleStart}
             disabled={!canStart}
             className={`
               w-full py-4 rounded-2xl font-poppins font-bold text-lg transition-all duration-200
-              ${
-                canStart
-                  ? 'bg-brand-yellow text-gray-900 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              ${canStart
+                ? 'bg-brand-yellow text-gray-900 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }
             `}
           >
-            Start the Race
+            {loading ? 'Joining race...' : 'Start the Race'}
           </button>
         </div>
 
