@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { GameState, GamePhase, RoleId } from './types';
+import { GameState, RoleId } from './types';
 import { LEVELS, TOTAL_QUESTIONS } from '@/data/questions';
 
 type GameAction =
