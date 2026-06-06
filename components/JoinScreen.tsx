@@ -17,7 +17,7 @@ export default function JoinScreen() {
 
   const childRoles = ROLES.filter(r => !r.isObserver);
   const observerRoles = ROLES.filter(r => r.isObserver);
-  const canStart = name.trim().length > 0 && selectedRole !== null && roomCode.trim().length > 0 && !loading;
+  const canStart = name.trim().length > 0 && selectedRole !== null && roomCode.length === 6 && !loading;
 
   async function handleStart() {
     if (!canStart || !selectedRole) return;
@@ -25,7 +25,7 @@ export default function JoinScreen() {
     setError('');
 
     const role = ROLES.find(r => r.id === selectedRole)!;
-    const code = roomCode.trim().toUpperCase();
+    const code = roomCode.trim();
 
     try {
       const res = await fetch('/api/players', {
@@ -85,16 +85,18 @@ export default function JoinScreen() {
 
           <div>
             <label className="block font-poppins font-semibold text-gray-700 mb-2 text-sm">
-              Room Code
+              6-Digit Room Code
             </label>
             <input
               type="text"
+              inputMode="numeric"
               value={roomCode}
-              onChange={e => setRoomCode(e.target.value.toUpperCase())}
-              placeholder="e.g. DELHI-01"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-body focus:outline-none focus:border-brand-blue transition-colors text-base font-poppins font-bold tracking-widest uppercase"
+              onChange={e => setRoomCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="e.g. 482935"
+              maxLength={6}
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-body focus:outline-none focus:border-brand-blue transition-colors text-base font-poppins font-bold tracking-[0.3em] text-center"
             />
-            <p className="text-xs text-gray-400 mt-1 font-body">Ask your facilitator for the room code</p>
+            <p className="text-xs text-gray-400 mt-1 font-body text-center">Get this code from your facilitator</p>
           </div>
 
           <div>

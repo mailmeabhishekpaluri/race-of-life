@@ -72,10 +72,11 @@ export default function RaceDashboard({ roomCode }: RaceDashboardProps) {
 
         <div className="flex items-center gap-6 flex-wrap">
           <div className="text-center">
-            <div className="font-poppins font-black text-brand-yellow text-2xl tracking-widest">
+            <div className="text-gray-500 text-xs uppercase tracking-widest mb-1">Share with volunteers</div>
+            <div className="font-poppins font-black text-brand-yellow text-3xl tracking-[0.3em]">
               {roomCode}
             </div>
-            <div className="text-gray-500 text-xs uppercase tracking-widest">Room Code</div>
+            <div className="text-gray-600 text-xs mt-0.5 font-body">race-of-life.vercel.app</div>
           </div>
 
           <div className="flex items-center gap-3 text-sm">
