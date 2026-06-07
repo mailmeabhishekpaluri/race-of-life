@@ -7,6 +7,7 @@ export default function DashboardPage() {
   const [activeRoom, setActiveRoom] = useState('');
   const [input, setInput] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -18,11 +19,20 @@ export default function DashboardPage() {
     }
   }, []);
 
-  function handleJoin() {
+  async function handleJoin() {
     const code = input.trim();
     if (code.length !== 6) return;
+    setLoading(true);
+    try {
+      await fetch('/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_code: code }),
+      });
+    } catch { /* silent */ }
     setActiveRoom(code);
     window.history.replaceState({}, '', `/dashboard?room=${code}`);
+    setLoading(false);
   }
 
   if (!mounted) {
@@ -66,10 +76,10 @@ export default function DashboardPage() {
 
           <button
             onClick={handleJoin}
-            disabled={input.length !== 6}
+            disabled={input.length !== 6 || loading}
             className="w-full bg-brand-blue text-white font-poppins font-bold py-4 rounded-2xl hover:bg-blue-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-lg"
           >
-            Start Room
+            {loading ? 'Starting...' : 'Start Room'}
           </button>
 
           <p className="text-gray-700 text-xs mt-6 font-body">
