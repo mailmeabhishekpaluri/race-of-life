@@ -21,4 +21,20 @@ export async function initDb() {
   await sql`
     CREATE INDEX IF NOT EXISTS idx_players_room_code ON players(room_code)
   `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS rooms (
+      id SERIAL PRIMARY KEY,
+      room_code VARCHAR(10) UNIQUE NOT NULL,
+      current_question_index INTEGER NOT NULL DEFAULT -1,
+      status VARCHAR(20) NOT NULL DEFAULT 'waiting',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+  await sql`
+    ALTER TABLE players ADD COLUMN IF NOT EXISTS last_answered_index INTEGER NOT NULL DEFAULT -1
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_rooms_room_code ON rooms(room_code)
+  `;
 }
