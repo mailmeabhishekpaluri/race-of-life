@@ -42,7 +42,7 @@ export default function JoinScreen() {
       if (!res.ok) throw new Error('Failed to join');
       const { id } = await res.json();
       dispatch({
-        type: 'START_GAME',
+        type: 'JOIN_GAME',
         playerName: name.trim(),
         roleId: selectedRole,
         playerId: id,

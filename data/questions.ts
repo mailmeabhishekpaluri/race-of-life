@@ -2,6 +2,13 @@ import { Level, Role } from '@/lib/types';
 
 export const ROLES: Role[] = [
   {
+    id: 'privileged-child',
+    label: 'Privileged Child',
+    description: 'A child born into a family with full access to resources, education, health, and opportunities',
+    emoji: '👑',
+    isObserver: false,
+  },
+  {
     id: 'orphan',
     label: 'Orphan',
     description: 'A child who has lost both parents',
@@ -143,3 +150,4 @@ export const LEVELS: Level[] = [
 ];
 
 export const TOTAL_QUESTIONS = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
+export const ALL_QUESTIONS = LEVELS.flatMap(l => l.questions);

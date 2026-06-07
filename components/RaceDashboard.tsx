@@ -72,6 +72,7 @@ export default function RaceDashboard({ roomCode }: RaceDashboardProps) {
   const isLevelEnd = LEVEL_END_INDICES.includes(currentIndex);
   const isLastQuestion = currentIndex === 24;
   const totalPlayers = players.length;
+  const hasPrivilegedChild = players.some(p => p.role_id === 'privileged-child');
 
   return (
     <div className="min-h-screen bg-[#050d1a] text-white flex flex-col">
@@ -145,12 +146,24 @@ export default function RaceDashboard({ roomCode }: RaceDashboardProps) {
           {/* Action buttons */}
           <div className="flex flex-wrap gap-3">
             {status === 'waiting' && (
-              <button
-                onClick={() => updateRoom(0, 'active')}
-                className="bg-brand-blue text-white font-poppins font-bold px-6 py-3 rounded-xl hover:bg-blue-400 transition-colors text-base"
-              >
-                ▶ Start Race
-              </button>
+              <>
+                <button
+                  onClick={() => updateRoom(0, 'active')}
+                  disabled={!hasPrivilegedChild}
+                  className={`font-poppins font-bold px-6 py-3 rounded-xl transition-colors text-base ${
+                    hasPrivilegedChild
+                      ? 'bg-brand-blue text-white hover:bg-blue-400'
+                      : 'bg-white/10 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  ▶ Start Race
+                </button>
+                {!hasPrivilegedChild && (
+                  <p className="text-brand-yellow text-xs font-body mt-1">
+                    👑 Waiting for a Privileged Child player to join...
+                  </p>
+                )}
+              </>
             )}
             {status === 'active' && !isLevelEnd && !isLastQuestion && (
               <button
@@ -283,7 +296,7 @@ function PlayerLane({
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-2xl leading-none">{player.role_emoji}</span>
             <span className="font-poppins font-bold text-white text-base md:text-lg truncate">
-              {player.player_name}
+              {player.role_label}
             </span>
             {isLeader && <span className="text-brand-yellow text-base flex-shrink-0">🏆</span>}
             {player.finished && (
@@ -304,7 +317,7 @@ function PlayerLane({
               </span>
             )}
           </div>
-          <div className="text-gray-500 text-xs font-body mt-0.5">{player.role_label}</div>
+          <div className="text-gray-500 text-xs font-body mt-0.5">{player.player_name}</div>
         </div>
 
         {/* Score */}
